@@ -41,6 +41,7 @@ const (
 	commandStart  = "/start"
 	commandSearch = "/search"
 	commandStatus = "/status"
+	commandPing = "/ping"
 )
 
 func NewService() (*Service, error) {
@@ -117,6 +118,10 @@ func (s *Service) Start(ctx context.Context) {
 		{
 			Command:     "status",
 			Description: "Show bot and account status",
+		},
+		{
+			Command:     "ping",
+			Description: "Ping the bot",
 		},
 	}
 	_, err = s.bot.SetMyCommands(ctx, &bot.SetMyCommandsParams{Commands: commands})
@@ -201,6 +206,9 @@ func (s *Service) handler(ctx context.Context, b *bot.Bot, m *models.Update) {
 		return
 	} else if strings.HasPrefix(message.Text, commandStatus+" ") || message.Text == commandStatus {
 		s.statusHandler(ctx, b, m)
+		return
+	} else if strings.HasPrefix(message.Text, commandPing+" ") || message.Text == commandPing {
+		s.pingHandler(ctx, b, m)
 		return
 	}
 
@@ -605,6 +613,13 @@ func (s *Service) statusHandler(ctx context.Context, b *bot.Bot, m *models.Updat
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: message.Chat.ID,
 		Text:   strings.Join(lines, "\n"),
+	})
+}
+
+func (s *Service) pingHandler(ctx context.Context, b *bot.Bot, m *models.Update) {
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID: m.Message.Chat.ID,
+		Text:   "Pong!",
 	})
 }
 
