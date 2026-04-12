@@ -41,7 +41,7 @@ const (
 	commandStart  = "/start"
 	commandSearch = "/search"
 	commandStatus = "/status"
-	commandPing = "/ping"
+	commandPing   = "/ping"
 )
 
 func NewService() (*Service, error) {
@@ -559,6 +559,7 @@ func (s *Service) statusHandler(ctx context.Context, b *bot.Bot, m *models.Updat
 		"Memogram status",
 		fmt.Sprintf("Server: %s", s.client.baseURL),
 		fmt.Sprintf("Data file: %s", s.config.Data),
+		ProbeBackendLatency(ctx, s.client).StatusLine(),
 	}
 
 	if s.instanceProfile != nil && s.instanceProfile.InstanceUrl != "" {
